@@ -42,6 +42,10 @@ def get_historical_data_day_by_day(
     if len(response.data) == 0:
         raise NoneException("")
 
+    if response.status != 200:
+        logger.warning("status {}".format(str(response.status)))
+        
+
     return json.loads(response.data.decode('utf-8'))
         
 
@@ -160,8 +164,7 @@ def lambda_handler(event, context):
     first_day = body.get("first_day")
     last_day = body.get("last_day")
 
-    print("first_day ", first_day)
-    print("last_day ", last_day)
+    logger.info("stock {stock} first_day {dt_ini} last_day {dt_fim}".format(stock=stock_name, dt_ini=first_day, dt_fim=last_day))
     
     data = get_historical_data_day_by_day(
         stock=stock_name,
@@ -173,7 +176,8 @@ def lambda_handler(event, context):
 
     price = data.get("prices")
 
-    if len(price) <= 0:
+    if price is None or len(price) <= 0:
+        logger.info("Finalizou stock {stock}".format(stock=stock_name))
         return
 
     for item in price:

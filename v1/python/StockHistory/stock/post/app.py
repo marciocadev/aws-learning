@@ -10,7 +10,7 @@ from datetime import datetime, date, timedelta
 from decimal import Decimal
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.ERROR)
 
 sqs = boto3.client("sqs")
 
@@ -36,7 +36,7 @@ def lambda_handler(event, context):
 
     queryStringParameters = event.get("queryStringParameters")
     if queryStringParameters is not None:
-        stock = queryStringParameters.get("stock")
+        stock = queryStringParameters.get("stock").upper()
 
     dt_ini, dt_fim, first_day, last_day = get_year_interval(date.today())
     
